@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="เว็บติว PBI6 Remove Selection ไล่จากปุ่ม Remove ถึงฐานข้อมูล">
+  <title>PBI6 | ห้องติว Remove Selection</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="snippets.js" defer></script>
+  <script src="study.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">ข้ามไปเนื้อหา</a>
+  <header class="container top">
+    <a href="#main" class="brand"><span class="brand-icon" aria-hidden="true">↳</span> ห้องติว PBI6</a>
+    <nav aria-label="บทเรียน"><a href="#demo">ลองลบ</a><a href="#flow">Flow PBI6</a><a href="#code">ไล่โค้ด</a><a href="#team">ภาพรวมทีม</a><a href="#practice">ซ้อมสอบ</a><a href="#quiz">ซ้อมตอบ</a></nav>
+  </header>
+  <main id="main" class="container">
+    <div class="hero" id="demo">
+      <div class="intro">
+        <h1>กด Remove<br>แล้วเกิดอะไรขึ้น?</h1>
+        <p class="lead">ตามวิชาเดียวจาก My Schedule ไปถึงฐานข้อมูล แล้วดูว่ามันกลับมาให้เลือกได้อย่างไร</p>
+        <a class="button primary" href="#code">เริ่มไล่โค้ด</a>
+        <p class="note">จำลองพฤติกรรมจาก <code>feature/sprint2-final</code> โดยใช้ข้อมูลตัวอย่าง</p>
+      </div>
+      <section class="sim surface" aria-labelledby="sim-title">
+        <div class="panel-top"><h2 id="sim-title">ตารางทดลอง</h2><button class="subtle" id="reset" type="button">เริ่มใหม่</button></div>
+        <fieldset class="scenarios">
+          <legend>เลือกผลตอบกลับของ DELETE</legend>
+          <div class="choices">
+            <label><input type="radio" name="scenario" value="204" checked><span>204 สำเร็จ</span></label>
+            <label><input type="radio" name="scenario" value="404"><span>404 ไม่พบ</span></label>
+            <label><input type="radio" name="scenario" value="500"><span>500 ผิดพลาด</span></label>
+          </div>
+        </fieldset>
+        <div class="tables">
+          <table><caption>My Schedule</caption><thead><tr><th scope="col">วิชา</th><th scope="col">Section</th><th scope="col">การเลือก</th></tr></thead>
+            <tbody id="my-rows"><tr><td>INT134 <small>System Deployment</small></td><td>1</td><td>Fixed</td></tr><tr><td>LNG202 <small>Basic Reading for Science and Technology</small></td><td>7</td><td>เลือกไว้</td></tr></tbody>
+          </table>
+          <table><caption>Courses to Choose</caption><thead><tr><th scope="col">วิชา</th><th scope="col">Section</th><th scope="col">การเลือก</th></tr></thead>
+            <tbody id="choice-rows"><tr><td colspan="3">LNG202 ถูกเลือกไว้แล้ว</td></tr></tbody>
+          </table>
+        </div>
+        <p id="sim-status" class="sim-status" role="status">ลองกด Change ที่ LNG202 แล้วเปิด Remove เพื่อดู section ใหม่</p>
+      </section>
+    </div>
+
+    <section class="log-section section" aria-labelledby="trace-title">
+      <div class="section-head">
+        <div><h2 id="trace-title">คำขอเดินทางยังไง</h2><p>ข้อความจะเปลี่ยนตามที่ลองกดด้านบน</p></div>
+        <div class="selection-value"><span>ค่า selectedSection ในหน้าเว็บ</span><output id="selection-value" aria-label="ค่า selectedSection">{ 45: 7 }</output></div>
+      </div>
+      <ol class="trail surface" id="trail"><li><span class="trace-layer">พร้อมทดลอง</span><span>ตัวอย่างเริ่มจากเลือก LNG202 section 7 ไว้แล้ว</span></li></ol>
+    </section>
+
+    <section class="section" id="flow" aria-labelledby="flow-title">
+      <div class="section-head"><div><h2 id="flow-title">Flow PBI6 Remove</h2><p>ตามเส้นทางจากหน้า My Schedule ผ่าน API ไปถึงฐานข้อมูล แล้วกลับมาอัปเดตตารางหน้าเดิม</p></div></div>
+      <ol class="remove-flow surface" role="list">
+        <li>
+          <h3>จากหน้าหลักไป My Schedule</h3>
+          <p><code>index.html</code> บรรทัด 17 มีลิงก์ไป <code>my-schedule.html</code> และหน้านั้นโหลด <code>my-schedule.js</code> ที่บรรทัด 76</p>
+        </li>
+        <li>
+          <h3>วาดแถวและใส่ปุ่ม Remove</h3>
+          <p><code>my-schedule.js</code> บรรทัด 92 ถึง 99 เช็ก <code>selected</code> แล้วส่งข้อมูลแถวพร้อม <code>onConfirm: removeSelection</code> ให้ <code>createRemoveButton()</code> ใน <code>remove-selection.js</code> <a href="#flow-code-button">ดูโค้ดสร้างปุ่ม</a></p>
+        </li>
+        <li>
+          <h3>กดปุ่มเพื่อเปิดกล่องยืนยัน</h3>
+          <p><code>remove-selection.js</code> บรรทัด 17 ถึง 27 เติมชื่อวิชาและ section แล้วเปิดกล่อง <code>#remove-dialog</code> ที่อยู่ใน <code>my-schedule.html</code> บรรทัด 58</p>
+          <dl class="flow-branches">
+            <div><dt>Cancel หรือ Esc</dt><dd>กล่องปิด แล้วจบตรงนี้ ไม่มีคำขอ DELETE</dd></div>
+            <div><dt>ยืนยัน Remove</dt><dd>ค่า <code>returnValue</code> เป็น <code>"remove"</code> จึงเรียก <code>onConfirm(course.id)</code> แล้วไปขั้นถัดไป</dd></div>
+          </dl>
+        </li>
+        <li>
+          <h3>Frontend ส่งคำขอลบ</h3>
+          <p><code>removeSelection(courseId)</code> ใน <code>my-schedule.js</code> บรรทัด 186 ถึง 191 ส่ง <code>DELETE /api/v1/students/:studentId/selections/:courseId</code> <a href="#flow-code-request">ดูโค้ดส่งคำขอ</a></p>
+        </li>
+        <li>
+          <h3>Backend ไปถึงฐานข้อมูล</h3>
+          <p><code>backend/server.js</code> บรรทัด 27 ส่งคำขอให้ <code>student-controller.js</code> บรรทัด 33 ตรวจรหัส จากนั้น <code>student-service.js</code> บรรทัด 62 ใช้ Prisma ลบรายการเลือกตามรหัสนักศึกษาและรหัสวิชา <a href="#flow-code-express">ดูโค้ดรับ DELETE</a></p>
+        </li>
+        <li>
+          <h3>ผลตอบกลับมาที่ My Schedule</h3>
+          <dl class="flow-branches">
+            <div><dt>204 สำเร็จ</dt><dd><code>my-schedule.js</code> บรรทัด 198 ถึง 200 ลบคีย์ใน <code>selectedSection</code> แล้วเรียก <code>render()</code> แถวที่เลือกจะหายจาก My Schedule และ section ของวิชานั้นจะกลับมาใน Courses to Choose <a href="#flow-code-render">ดูโค้ดวาดตาราง</a></dd></div>
+            <div><dt>404 ไม่พบรายการ</dt><dd>แจ้งผู้ใช้ จากนั้น <code>rereadSelections()</code> อ่านรายการใหม่เมื่อปิดกล่องด้วย OK หรือ Esc</dd></div>
+            <div><dt>500 ข้อผิดพลาด</dt><dd>แสดงข้อความทั่วไป และตารางยังใช้ข้อมูลเดิม</dd></div>
+          </dl>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" id="code" aria-labelledby="code-title">
+      <div class="section-head"><div><h2 id="code-title">ไล่โค้ดตามเส้นทาง Remove</h2><p>กดเปิดทีละขั้น โค้ดด้านขวาคัดจากไฟล์จริง ส่วนคำอธิบายบอกว่าควรมองบรรทัดไหนก่อน</p></div></div>
+      <div class="code-stack surface" id="code-stack">
+        <details id="step-1" name="source" open><summary><span class="step-no">01</span><strong>เปิดกล่องยืนยัน</strong><span class="layer">HTML</span></summary>
+          <div class="lesson"><div><h3>กล่องรอคำตอบจากผู้ใช้</h3>
+            <p><strong class="line-reference">my-schedule.html · บรรทัด 58 ถึง 60</strong>เปิดส่วนของกล่อง <code>#remove-dialog</code> และพื้นที่แสดงข้อความ ฟอร์มใช้ <code>method="dialog"</code> เพื่อปิดกล่องและส่งค่าปุ่มให้ <code>returnValue</code> โดยไม่ส่งฟอร์มไป backend</p>
+            <p><strong class="line-reference">my-schedule.html · บรรทัด 61 ถึง 62</strong>ปุ่ม Cancel ส่งค่า <code>"cancel"</code> และได้โฟกัสก่อนเพราะ <code>autofocus</code> ส่วนปุ่ม Remove ส่งค่า <code>"remove"</code></p></div><figure class="source" data-source="dialog"></figure></div>
+        </details>
+        <details id="step-2" name="source"><summary><span class="step-no">02</span><strong>เช็กว่ากด Remove จริง</strong><span class="layer">Frontend</span></summary>
+          <div class="lesson"><div><h3 id="flow-code-button">ปุ่มมีเฉพาะแถวที่เลือกเอง</h3>
+            <p><strong class="line-reference">my-schedule.js · บรรทัด 92</strong>เทียบ section ของแถวกับ <code>selectedSection[s.course.id]</code> เพื่อดูว่าเป็นแถวที่ผู้ใช้เลือกอยู่หรือเปล่า</p>
+            <p><strong class="line-reference">my-schedule.js · บรรทัด 95 ถึง 99</strong>ส่งค่า <code>selected</code> และฟังก์ชัน <code>removeSelection</code> เข้า <code>createRemoveButton()</code> ถ้าสร้างปุ่มได้จึงใส่ลงในช่องของแถวนั้น</p>
+            <p><strong class="line-reference">remove-selection.js · บรรทัด 2 ถึง 9</strong>คืน <code>null</code> หากแถวไม่ได้ถูกเลือกหรือเป็นคาบบังคับ แถวที่ผ่านเงื่อนไขจะได้ปุ่ม Remove</p>
+            <p><strong class="line-reference">remove-selection.js · บรรทัด 17 ถึง 22</strong>เติมชื่อวิชากับ section ลงในกล่อง ล้าง <code>returnValue</code> ก่อนเปิดเพื่อกันค่าเก่าค้างเมื่อกด Esc</p>
+            <p><strong class="line-reference">remove-selection.js · บรรทัด 23 ถึง 27</strong>เมื่อปิดกล่อง จะเรียก <code>onConfirm(course.id)</code> เฉพาะเมื่อค่าคือ <code>"remove"</code> ค่า <code>once: true</code> ให้ตัวฟังทำงานครั้งเดียวต่อการเปิดกล่อง</p></div><div class="source-group"><figure class="source" data-source="action"></figure><figure class="source" data-source="button"></figure></div></div>
+        </details>
+        <details id="step-3" name="source"><summary><span class="step-no">03</span><strong>ส่ง DELETE แล้วแยกผล</strong><span class="layer">Frontend → API</span></summary>
+          <div class="lesson"><div><h3 id="flow-code-request">ส่ง courseId ไปกับ URL</h3>
+            <p><strong class="line-reference">my-schedule.js · บรรทัด 186 ถึง 196</strong><code>removeSelection()</code> ใช้ <code>fetch()</code> ส่ง DELETE โดยใส่ <code>studentId</code> กับ <code>courseId</code> ใน URL ถ้าคำขอล้มเหลวจะขึ้นข้อความทั่วไป</p>
+            <p><strong class="line-reference">my-schedule.js · บรรทัด 198 ถึง 204</strong><code>204</code> ลบคีย์แล้ววาดตารางใหม่ ส่วน <code>404</code> เปิดข้อความพร้อมส่ง <code>rereadSelections</code> เป็นงานที่ต้องทำหลังปิดกล่อง สถานะอื่น เช่น <code>500</code> ขึ้นข้อความทั่วไป</p>
+            <p><strong class="line-reference">my-schedule.js · บรรทัด 35 ถึง 39</strong><code>showMessage()</code> ตั้งข้อความและเก็บฟังก์ชันที่จะเรียกหลังปิดกล่อง</p>
+            <p><strong class="line-reference">my-schedule.js · บรรทัด 264 ถึง 272</strong>OK สั่งปิดกล่อง ส่วน Esc ปิดผ่านเบราว์เซอร์ ทั้งสองทางเข้า event <code>close</code> เพื่อเรียกฟังก์ชันที่เก็บไว้ ถ้าไม่มีฟังก์ชันก็จบตรงนั้น</p></div><div class="source-group"><figure class="source" data-source="request"></figure><figure class="source" data-source="message"></figure><figure class="source" data-source="messageClose"></figure></div></div>
+        </details>
+        <details id="step-4" name="source"><summary><span class="step-no">04</span><strong>Express รับ route และตรวจข้อมูล</strong><span class="layer">Backend</span></summary>
+          <div class="lesson"><div><h3 id="flow-code-express">Route ชี้ให้ Express เรียก controller</h3>
+            <p><strong class="line-reference">server.js · บรรทัด 27</strong>Express จับคำขอ DELETE แล้วส่งต่อให้ <code>removeSelection</code> ของ backend</p>
+            <p><strong class="line-reference">student-controller.js · บรรทัด 33 ถึง 43</strong>อ่านรหัสจาก <code>req.params</code> ตรวจว่า <code>courseId</code> แปลงเป็นจำนวนเต็มได้ แล้วหานักศึกษาและลองลบรายการ หากไม่พบจะตอบ <code>404</code></p>
+            <p><strong class="line-reference">student-controller.js · บรรทัด 46 ถึง 49</strong>เมื่อลบสำเร็จ ตอบ <code>204</code> โดยไม่มี body หากเกิดข้อผิดพลาดจะตอบ <code>500</code></p></div><div class="source-group"><figure class="source" data-source="route"></figure><figure class="source" data-source="controller"></figure></div></div>
+        </details>
+        <details id="step-5" name="source"><summary><span class="step-no">05</span><strong>Prisma ลบแถวใน selections</strong><span class="layer">Database</span></summary>
+          <div class="lesson"><div><h3>ลบเฉพาะคู่รหัสนักศึกษากับวิชา</h3>
+            <p><strong class="line-reference">student-service.js · บรรทัด 62 ถึง 65</strong><code>deleteMany()</code> ใช้ <code>where</code> ที่ต้องตรงทั้ง <code>student_id</code> และ <code>course_id</code> จึงลบเฉพาะรายการเลือกของนักศึกษาคนนั้น</p>
+            <p><strong class="line-reference">student-service.js · บรรทัด 67</strong>คืน <code>true</code> เมื่อมีแถวถูกลบ ถ้าได้ <code>count = 0</code> จะคืน <code>false</code> ให้ controller ตอบ <code>404</code></p></div><figure class="source" data-source="prisma"></figure></div>
+        </details>
+        <details id="step-6" name="source"><summary><span class="step-no">06</span><strong>วาดสองตารางด้วย render() ของ PBI4</strong><span class="layer">API → Frontend</span></summary>
+          <div class="lesson"><div><h3 id="flow-code-render">ทุก section กลับมาได้ยังไง</h3>
+            <p><strong class="line-reference">my-schedule.js · บรรทัด 117 ถึง 125</strong><code>render()</code> วนตามลำดับเดิมใน <code>schedules</code> คาบบังคับกับ section ที่เลือกอยู่จะเข้า My Schedule พอลบคีย์ของวิชาแล้ว เงื่อนไข <code>undefined</code> ทำให้ทุก section ที่ไม่บังคับของวิชานั้นกลับมาเป็นตัวเลือก</p>
+            <p><strong class="line-reference">my-schedule.js · บรรทัด 129 ถึง 133</strong><code>fillTable()</code> วาด My Schedule และ Courses to Choose จากผลที่แยกไว้ แล้วอัปเดตการแสดงส่วนที่ไม่มีข้อมูล</p></div><figure class="source" data-source="render"></figure></div>
+        </details>
+        <details id="step-7" name="source"><summary><span class="step-no">07</span><strong>เปลี่ยน section แล้วลบต่อ</strong><span class="layer">PBI7 → PBI6</span></summary>
+          <div class="lesson"><div><h3>Change กับ Remove ใช้แถวที่วาดใหม่ร่วมกัน</h3>
+            <p><strong class="line-reference">change-section.js · บรรทัด 3 ถึง 5, 26 ถึง 38</strong>ให้ปุ่ม Change กับแถวที่เลือกและมี section อื่น จากนั้นสร้างตัวเลือกจากรายการ <code>otherSections</code> ของวิชาเดียวกัน</p>
+            <p><strong class="line-reference">change-section.js · บรรทัด 40 ถึง 47</strong>อ่าน section จากปุ่มวิทยุที่เลือกแล้วส่ง <code>course.id</code> กับ section ใหม่ให้ <code>onConfirm</code> เฉพาะเมื่อยืนยัน Change</p>
+            <p><strong class="line-reference">my-schedule.js · บรรทัด 209 ถึง 216</strong><code>changeSection()</code> ส่ง PUT พร้อม <code>{ section }</code></p>
+            <p><strong class="line-reference">my-schedule.js · บรรทัด 223 ถึง 225</strong>เมื่อได้ <code>200</code> ให้เขียน section ใหม่ลง <code>selectedSection[courseId]</code> แล้วเรียก <code>render()</code> ปุ่ม Remove จากแถวใหม่จึงใช้ section ใหม่ในกล่องยืนยัน ลองได้ใน <a href="#demo">ตารางทดลอง</a></p></div><div class="source-group"><figure class="source" data-source="change"></figure><figure class="source" data-source="changeButton"></figure></div></div>
+        </details>
+      </div>
+      <noscript><p>เปิด JavaScript เพื่อดูโค้ดที่คัดจากโปรเจกต์และลองกด Change กับ Remove</p></noscript>
+    </section>
+
+    <section class="section" id="team" aria-labelledby="team-title">
+      <div class="section-head"><div><h2 id="team-title">ภาพรวมงานทีม</h2><p>ตามเส้นทางของนักศึกษาตั้งแต่ดูตารางรวมจนถึงเลือก เปลี่ยน และลบ section</p></div></div>
+      <ol class="trail surface team-flow">
+        <li><span class="trace-layer">PBI1 ดูตารางรวม</span><div>หน้าแรกใช้ <code>loadSchedules()</code> โหลดข้อมูลจาก <code>GET /api/v1/schedules</code> แล้ว <code>renderTable()</code> สร้างแถวในตาราง <a href="https://github.com/IT-BANGMOD-INTEGRATED-PROJECT-2026/int504-2026-project-group-20/blob/fcd43c58dbe0cba09393d32cd3dae3b6323d473f/frontend/app.js#L128">ดู loadSchedules()</a></div></li>
+        <li><span class="trace-layer">PBI2 กรองตามชั้นปี</span><div>ปุ่มชั้นปีเปลี่ยน <code>yearLevel</code> ใน URL ถ้ามีตารางรวมใน cache จะกรองจากข้อมูลนั้น ถ้ายังไม่มีจึงขอข้อมูลของปีที่เลือกจาก API <a href="https://github.com/IT-BANGMOD-INTEGRATED-PROJECT-2026/int504-2026-project-group-20/blob/fcd43c58dbe0cba09393d32cd3dae3b6323d473f/frontend/app.js#L101">ดู fetchRows() และ getRows()</a></div></li>
+        <li><span class="trace-layer">PBI3 ล็อกอิน</span><div>ลิงก์ My Schedule เปิดหน้าที่เรียก <code>requireSignIn()</code> ผ่าน Keycloak สำหรับ role <code>student</code> โค้ดส่ง <code>user.username</code> เป็นรหัสนักศึกษาให้ <code>showStudent()</code> <a href="https://github.com/IT-BANGMOD-INTEGRATED-PROJECT-2026/int504-2026-project-group-20/blob/fcd43c58dbe0cba09393d32cd3dae3b6323d473f/frontend/scripts/my-schedule.js#L274">ดูจุดเรียก Sign In</a></div></li>
+        <li><span class="trace-layer">PBI4 โหลด My Schedule</span><div><code>showStudent()</code> เอาชั้นปีและกลุ่มไปโหลดตาราง แล้วอ่านรายการที่เลือกไว้จาก <code>GET …/selections</code> ฟังก์ชัน <code>rememberSelections()</code> เก็บเป็น <code>selectedSection</code> ก่อนวาดสองตาราง <a href="https://github.com/IT-BANGMOD-INTEGRATED-PROJECT-2026/int504-2026-project-group-20/blob/fcd43c58dbe0cba09393d32cd3dae3b6323d473f/frontend/scripts/my-schedule.js#L234">ดู showStudent()</a></div></li>
+        <li><span class="trace-layer">PBI5 เลือก section</span><div><code>selectSection()</code> ส่ง <code>POST …/selections</code> พร้อม <code>{ courseId, section }</code> เมื่อได้ <code>201</code> จึงเก็บค่าใน <code>selectedSection[courseId]</code> แล้วเรียก <code>render()</code> <a href="https://github.com/IT-BANGMOD-INTEGRATED-PROJECT-2026/int504-2026-project-group-20/blob/fcd43c58dbe0cba09393d32cd3dae3b6323d473f/frontend/scripts/my-schedule.js#L161">ดู selectSection()</a></div></li>
+        <li><span class="trace-layer">PBI6 ลบรายการ</span><div>ปุ่ม Remove ส่ง <code>DELETE …/selections/:courseId</code> เมื่อได้ <code>204</code> จึงลบคีย์ที่ PBI5 เพิ่มและเรียก <code>render()</code> ของ PBI4 <a href="https://github.com/IT-BANGMOD-INTEGRATED-PROJECT-2026/int504-2026-project-group-20/blob/fcd43c58dbe0cba09393d32cd3dae3b6323d473f/frontend/scripts/my-schedule.js#L186">ดู removeSelection()</a></div></li>
+        <li><span class="trace-layer">PBI7 เปลี่ยน section</span><div><code>changeSection()</code> ส่ง <code>PUT …/selections/:courseId</code> พร้อม section ใหม่ เมื่อได้ <code>200</code> จึงเขียนค่าทับคีย์เดิม แล้วเรียก <code>render()</code> เหมือน Select และ Remove <a href="https://github.com/IT-BANGMOD-INTEGRATED-PROJECT-2026/int504-2026-project-group-20/blob/fcd43c58dbe0cba09393d32cd3dae3b6323d473f/frontend/scripts/my-schedule.js#L209">ดู changeSection()</a></div></li>
+      </ol>
+      <details class="surface spoken-example">
+        <summary>ลองเล่าภาพรวมในหนึ่งนาที แล้วเปิดดูตัวอย่างคำตอบ</summary>
+        <p>งานทีมเริ่มจากหน้าแสดงตารางเรียนรวมที่เลือกดูตามชั้นปีได้ พอเข้า My Schedule ระบบล็อกอินผ่าน Keycloak แล้วใช้รหัสนักศึกษาไปโหลดตารางและวิชาที่เลือกไว้ เพื่อนทำ Select ซึ่งเพิ่ม section ใน <code>selectedSection</code> ส่วนผมทำ Remove ซึ่งส่ง DELETE แล้วลบคีย์จาก object เดียวกัน Change ก็ใช้ object นี้เหมือนกัน โดยเขียน section ใหม่ทับค่าเดิม ทั้งสามฟีเจอร์เรียก <code>render()</code> เพื่ออัปเดต My Schedule และ Courses to Choose พร้อมกันครับ</p>
+      </details>
+    </section>
+
+    <section class="section" id="practice" aria-labelledby="practice-title">
+      <div class="section-head"><div><h2 id="practice-title">ซ้อมสอบ Frontend Assessment</h2><p>ฝึกอธิบายการออกแบบ ชี้บรรทัดที่งานของทีมเรียกโค้ดของคุณ แล้วสาธิตให้เห็นผล</p></div></div>
+      <section class="exam-ownership" id="exam-ownership" aria-labelledby="exam-owner-title">
+        <h3 id="exam-owner-title">ใครรับผิดชอบอะไร</h3>
+        <ul class="trail surface" role="list">
+          <li><strong>Dusit (คุณ)</strong><span>ทำ PBI6 Remove ทั้งปุ่ม กล่องยืนยัน การส่ง DELETE และการจัดการผล รวมถึงมีส่วนทำ Sign In/Out ใน PBI3</span></li>
+          <li><strong>Kongpop</strong><span>ทำ My Schedule (PBI4) และ API สำหรับ Select (PBI5) โค้ด Remove ใช้ <code>fillTable()</code> กับ <code>render()</code> ของเขา</span></li>
+          <li><strong>Phurin</strong><span>ทำ Change Section (PBI7) และมีส่วนใน Class Schedule, ตัวกรองชั้นปี และ PBI3 การ Change จะวาดแถวใหม่ ทำให้ Remove แสดง section ปัจจุบัน</span></li>
+        </ul>
+      </section>
+      <details class="surface spoken-example exam-ownership">
+        <summary>ตัวอย่างคำตอบว่า PBI6 ของคุณทำงานยังไง</summary>
+        <p>ผมทำ PBI6 Remove ครับ ตอนวาดตาราง <code>fillTable()</code> ของเพื่อนเรียก <code>createRemoveButton()</code> ของผมเพื่อสร้างปุ่มให้แถวที่เลือกเอง พอกดยืนยัน ปุ่มเรียก <code>removeSelection(courseId)</code> ให้ส่ง DELETE ถ้าได้ <code>204</code> ผมจะลบคีย์จาก <code>selectedSection</code> แล้วเรียก <code>render()</code> ของเพื่อน เพื่อให้ section ของวิชานั้นกลับไปอยู่ใน Courses to Choose ครับ</p>
+      </details>
+      <section class="exam-ownership" aria-labelledby="exam-why-title">
+        <h3 id="exam-why-title">คำถามต่อว่าเขียนแบบนี้ทำไม</h3>
+        <div class="qa surface exam-prompts">
+          <details><summary>ทำไมส่ง onConfirm: removeSelection โดยไม่มีวงเล็บ?</summary><p>ตอนสร้างปุ่ม เราส่งฟังก์ชันไปเก็บไว้ก่อน พอยืนยันจึงเรียก <code>onConfirm(course.id)</code> ให้ลบวิชาของแถวนั้น <a href="#flow-code-button">ดูโค้ดสร้างปุ่ม</a></p></details>
+          <details><summary>ทำไมต้องล้าง returnValue และตั้ง once: true?</summary><p>ล้างค่าเพื่อกัน <code>"remove"</code> จากรอบก่อนค้างตอนกด Esc ส่วน <code>once: true</code> เอาตัวฟังออกหลังกล่องปิดหนึ่งครั้ง เพื่อกันตัวฟังหลายรอบสะสม</p></details>
+          <details><summary>ทำไม 204 วาดใหม่ได้ทันที แต่ 404 ต้องอ่านข้อมูลใหม่?</summary><p>204 ยืนยันว่าลบสำเร็จ หน้าเว็บลบคีย์ที่จำไว้แล้ววาดใหม่ได้ ส่วน 404 อาจเป็นข้อมูลค้างจากอีกแท็บ จึงอ่านรายการล่าสุดหลังปิดกล่อง <a href="#flow-code-request">ดูโค้ดจัดการผล</a></p></details>
+          <details><summary>ทำไมลบ section 7 แล้ว section อื่นกลับมาด้วย?</summary><p>ค่า <code>{ 45: 7 }</code> เก็บ section 7 ไว้ใต้รหัสวิชา 45 เมื่อเอาคีย์ 45 ออก <code>render()</code> จะรู้ว่าวิชานี้ยังไม่ได้เลือก แล้วแสดงทุก section ที่เลือกได้อีกครั้ง <a href="#flow-code-render">ดูโค้ดวาดตาราง</a></p></details>
+          <details><summary>เพิ่งกด Change ทำไม Remove ถึงรู้ section ใหม่?</summary><p>Change เขียน section ใหม่ลง <code>selectedSection</code> แล้ววาดตารางใหม่ ปุ่ม Remove ของแถวใหม่จึงใช้ข้อมูล section ล่าสุด</p></details>
+        </div>
+      </section>
+      <p class="exam-line-cue"><strong>ซ้อมชี้สามจุด</strong> <code>my-schedule.js</code> บรรทัด 97 ส่งฟังก์ชัน → <code>remove-selection.js</code> บรรทัด 25 เรียกเมื่อยืนยัน → <code>my-schedule.js</code> บรรทัด 198 ถึง 200 วาดใหม่หลังลบสำเร็จ</p>
+      <h3>ฝึกชี้โค้ดจริง</h3>
+      <div class="qa surface exam-prompts">
+        <details><summary>เปิดไฟล์แล้วชี้ว่าปุ่ม Remove เริ่มมาจากไหน</summary><p>ชี้ที่ <code>fillTable()</code> ใน <code>my-schedule.js</code> ฟังก์ชันนี้ส่งแถวและ <code>onConfirm: removeSelection</code> เข้า <code>createRemoveButton()</code> ที่คุณเพิ่ม แล้วเอาปุ่มที่ได้ไปใส่ในช่องเดียวกับปุ่ม Change ของแถวนั้น <a href="https://github.com/IT-BANGMOD-INTEGRATED-PROJECT-2026/int504-2026-project-group-20/blob/fcd43c58dbe0cba09393d32cd3dae3b6323d473f/frontend/scripts/my-schedule.js#L95">เปิดบรรทัดที่สร้างปุ่ม</a></p></details>
+        <details><summary>ชี้บรรทัดที่มีผลเมื่อกด Remove กับ Cancel ต่างกัน</summary><p>เปิด <code>remove-selection.js</code> แล้วชี้ว่า handler ใน event <code>close</code> เรียก <code>onConfirm(course.id)</code> เมื่อ <code>returnValue</code> เป็น <code>"remove"</code> เท่านั้น ส่วน Cancel กับ Esc ไม่ผ่านเงื่อนไขนี้ <a href="https://github.com/IT-BANGMOD-INTEGRATED-PROJECT-2026/int504-2026-project-group-20/blob/fcd43c58dbe0cba09393d32cd3dae3b6323d473f/frontend/scripts/remove-selection.js#L23">เปิดบรรทัดที่ตรวจผลจากกล่อง</a></p></details>
+        <details><summary>ชี้ว่าผลจาก API กลับมาเปลี่ยนสองตารางตรงไหน</summary><p>ใน <code>removeSelection()</code> เมื่อได้ <code>204</code> ให้ชี้ <code>delete selectedSection[courseId]</code> และ <code>render()</code> แล้วเปิดตัวกรองใน <code>render()</code> เพื่ออธิบายว่าทำไมทุก section ของวิชานั้นกลับมาให้เลือก ถ้าได้ <code>404</code> ให้ชี้ <code>rereadSelections()</code> ที่ทำงานเมื่อกล่องข้อความปิดด้วย OK หรือ Esc <a href="https://github.com/IT-BANGMOD-INTEGRATED-PROJECT-2026/int504-2026-project-group-20/blob/fcd43c58dbe0cba09393d32cd3dae3b6323d473f/frontend/scripts/my-schedule.js#L186">เปิดบรรทัดที่จัดการผล DELETE</a></p></details>
+        <details><summary>หลัง Change แล้วกล่อง Remove รู้ section ใหม่ได้ยังไง?</summary><p>เมื่อ PUT ได้ <code>200</code> โค้ดแก้ <code>selectedSection[courseId]</code> แล้ว <code>render()</code> ส่ง schedule ของ section ใหม่ให้ <code>fillTable()</code> เพื่อสร้างปุ่ม Remove อีกครั้ง <a href="https://github.com/IT-BANGMOD-INTEGRATED-PROJECT-2026/int504-2026-project-group-20/blob/fcd43c58dbe0cba09393d32cd3dae3b6323d473f/frontend/scripts/my-schedule.js#L209">เปิดโค้ด Change</a></p></details>
+      </div>
+      <fieldset class="surface demo-checklist">
+        <legend>รายการซ้อมกับโปรเจกต์จริง</legend>
+        <p>เปิดแอปของทีมด้วยบัญชีนักศึกษาสำหรับทดสอบ แล้วติ๊กเมื่อเห็นผลแต่ละข้อ</p>
+        <label><input type="checkbox"><span>เปิดหน้าแรก เลือกชั้นปี แล้วเข้า My Schedule เพื่อล็อกอิน</span></label>
+        <label><input type="checkbox"><span>กด Select หนึ่ง section แล้วเช็กว่ามีปุ่ม Remove บนแถวที่เลือก ส่วนคาบบังคับไม่มีปุ่ม</span></label>
+        <label><input type="checkbox"><span>กด Change เลือก section ใหม่ แล้วยืนยัน จากนั้นเปิด Remove และเช็กว่าข้อความใช้ section ใหม่</span></label>
+        <label><input type="checkbox"><span>กด Remove แล้วกด Cancel หรือ Esc แถวยังอยู่ใน My Schedule</span></label>
+        <label><input type="checkbox"><span>กดยืนยัน Remove แล้วเช็กว่าแถวหายจาก My Schedule และทุก section ของวิชานั้นกลับไปอยู่ใน Courses to Choose</span></label>
+        <label><input type="checkbox"><span>รีเฟรชหน้าแล้วเช็กว่าวิชายังอยู่ใน Courses to Choose</span></label>
+      </fieldset>
+    </section>
+
+    <section class="section" id="quiz" aria-labelledby="quiz-title">
+      <div class="section-head"><div><h2 id="quiz-title">ซ้อมตอบอาจารย์</h2><p>ลองตอบออกเสียงก่อนกดเปิดคำตอบ</p></div></div>
+      <div class="qa surface">
+        <details><summary>ทำไม Fixed ไม่มีปุ่ม Remove?</summary><p>เพราะเป็นคาบที่ระบบกำหนดไว้ให้ <code>createRemoveButton()</code> คืน <code>null</code> เมื่อ <code>schedule.fixed</code> เป็นจริง</p></details>
+        <details><summary>กด Cancel หรือ Esc แล้ว API ถูกเรียกไหม?</summary><p>ไม่ถูกเรียก เพราะ handler ตรวจว่า <code>returnValue === "remove"</code> ก่อน ส่วนค่าจากครั้งก่อนถูกล้างทุกครั้งที่เปิดกล่อง</p></details>
+        <details><summary>ลบ section 7 แล้วทำไม section อื่นของ LNG202 กลับมาด้วย?</summary><p>ตารางตัวเลือกซ่อนทั้งวิชาเมื่อมี <code>courseId</code> อยู่ใน <code>selectedSection</code> พอลบคีย์ของ LNG202 ออก <code>render()</code> จะส่งทุก section ที่ไม่ fixed ไปยัง Courses to Choose</p></details>
+        <details><summary>204 ต่างจาก 404 ยังไงในหน้าเว็บ?</summary><p>204 คือ backend ลบสำเร็จ หน้าเว็บลบคีย์จาก <code>selectedSection</code> ทันที ส่วน 404 สื่อว่าหา selection ที่จะลบไม่เจอ เมื่อปิดกล่องข้อความด้วย OK หรือ Esc หน้าเว็บจะดึงรายการปัจจุบันจาก server ใหม่</p></details>
+        <details><summary>ส่วนของเราต่อกับ PBI4 และ PBI5 ตรงไหน?</summary><p>PBI4 โหลดตารางและ selections เดิม PBI5 เพิ่ม selection ด้วย POST ส่วน PBI6 ลบ selection เดียวกันด้วย DELETE ทั้งสามส่วนใช้ข้อมูลชุดเดียวและวาด My Schedule กับ Courses to Choose จาก <code>render()</code></p></details>
+        <details><summary>ลบจากหน้าเว็บอย่างเดียว หรือจากฐานข้อมูลด้วย?</summary><p>ในโปรเจกต์จริง backend ลบจากตาราง <code>selections</code> ก่อนตอบ 204 แล้ว frontend จึงลบคีย์จาก <code>selectedSection</code> และวาดใหม่ เว็บติวนี้แค่จำลองทั้งสองฝั่งไว้ในหน่วยความจำ</p></details>
+      </div>
+    </section>
+
+    <footer class="foot"><strong>ห้องติว PBI6 / INT504 Sprint 2</strong><p>อิง branch <code>feature/sprint2-final</code> ที่ commit <code>fcd43c5</code></p><a href="#main">กลับด้านบน</a></footer>
+  </main>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-message">
+    <h2 id="confirm-message"></h2>
+    <form method="dialog"><button class="button" value="cancel" autofocus>Cancel</button><button class="button primary" value="remove">Remove</button></form>
+  </dialog>
+  <dialog id="lab-change-dialog" aria-labelledby="lab-change-title">
+    <h2 id="lab-change-title">Change LNG202 section</h2>
+    <form method="dialog">
+      <fieldset class="change-options"><legend>เลือก section ใหม่</legend><div id="lab-change-options"></div></fieldset>
+      <div class="dialog-actions">
+        <button class="button primary" id="lab-change-confirm" value="change" disabled>Change</button>
+        <button class="button" value="cancel">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="notice-dialog" aria-labelledby="notice-message">
+    <h2 id="notice-message"></h2>
+    <form method="dialog"><button class="button primary" value="ok" autofocus>OK</button></form>
+  </dialog>
+</body>
+</html>
+
