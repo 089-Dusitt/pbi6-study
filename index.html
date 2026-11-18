@@ -13,7 +13,7 @@
   <a class="skip" href="#main">ข้ามไปเนื้อหา</a>
   <header class="container top">
     <a href="#main" class="brand"><span class="brand-icon" aria-hidden="true">↳</span> ห้องติว PBI6</a>
-    <nav aria-label="บทเรียน"><a href="#demo">ลองลบ</a><a href="#flow">Flow PBI6</a><a href="#code">ไล่โค้ด</a><a href="#team">ภาพรวมทีม</a><a href="#practice">ซ้อมสอบ</a><a href="#quiz">ซ้อมตอบ</a></nav>
+    <nav aria-label="บทเรียน"><a href="#demo">ลองลบ</a><a href="#click-path">กดแล้วไปไหน</a><a href="#flow">Flow PBI6</a><a href="#code">ไล่โค้ด</a><a href="#team">ภาพรวมทีม</a><a href="#practice">ซ้อมสอบ</a><a href="#quiz">ซ้อมตอบ</a></nav>
   </header>
   <main id="main" class="container">
     <div class="hero" id="demo">
@@ -51,6 +51,26 @@
         <div class="selection-value"><span>ค่า selectedSection ในหน้าเว็บ</span><output id="selection-value" aria-label="ค่า selectedSection">{ 45: 7 }</output></div>
       </div>
       <ol class="trail surface" id="trail"><li><span class="trace-layer">พร้อมทดลอง</span><span>ตัวอย่างเริ่มจากเลือก LNG202 section 7 ไว้แล้ว</span></li></ol>
+    </section>
+
+    <section class="section" id="click-path" aria-labelledby="click-path-title">
+      <div class="section-head"><div><h2 id="click-path-title">กดปุ่มแล้วโค้ดไปไหน</h2><p>กดตามทีละขั้นเพื่อจำลองการลบ LNG202 section 7 แล้วดูชื่อไฟล์กับบรรทัดที่ส่งงานต่อกัน</p></div></div>
+      <div class="surface click-walk">
+        <p id="walk-progress"></p>
+        <div id="walk-reading" aria-live="polite" aria-atomic="true">
+          <h3 id="walk-title">เริ่มที่หน้า My Schedule</h3>
+          <p id="walk-file"></p><p id="walk-explain">เปิด JavaScript เพื่อกดตามเส้นทาง Remove</p><p id="walk-connection"></p>
+        </div>
+        <pre id="walk-source" tabindex="0" aria-label="โค้ดจริงของขั้นที่เลือก"><code></code></pre>
+        <div class="walk-controls" aria-label="ลองกดตามเส้นทาง Remove">
+          <button class="button" id="walk-back" type="button">ย้อนขั้น</button>
+          <button class="button primary" id="walk-next" type="button">กด Remove ในแถว</button>
+          <button class="button" id="walk-cancel" type="button" hidden>กด Cancel</button>
+          <button class="button" id="walk-escape" type="button" hidden>กด Esc</button>
+          <button class="button" id="walk-restart" type="button">เริ่มใหม่</button>
+        </div>
+        <a href="#code">อ่านคำอธิบายโค้ดทั้งหมด</a>
+      </div>
     </section>
 
     <section class="section" id="flow" aria-labelledby="flow-title">

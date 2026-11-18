@@ -218,3 +218,134 @@ for (const figure of document.querySelectorAll("[data-source]")) {
 $("#reset").addEventListener("click", reset);
 reset();
 
+
+
+const walkSteps = [
+  [
+    "ตารางสร้างปุ่ม Remove",
+    "my-schedule.js บรรทัด 92 ถึง 99",
+    "fillTable() ส่งข้อมูลแถว s ค่า selected และ onConfirm: removeSelection ไปให้ createRemoveButton() แล้วเอาปุ่มใส่ในช่องของแถว",
+    "my-schedule.js → remove-selection.js",
+    "action",
+    92,
+    99,
+    "กด Remove ในแถว"
+  ],
+  [
+    "กล่องยืนยันเปิดขึ้น",
+    "remove-selection.js บรรทัด 11 ถึง 22",
+    "หา #remove-dialog ที่อยู่ใน my-schedule.html เติมชื่อวิชากับ section ลงใน #remove-message แล้วใช้ showModal() เปิดกล่อง",
+    "remove-selection.js → my-schedule.html บรรทัด 58",
+    "button",
+    11,
+    22,
+    "ยืนยัน Remove ในกล่อง"
+  ],
+  [
+    "ยืนยันแล้วเรียก onConfirm(45)",
+    "remove-selection.js บรรทัด 23 ถึง 27",
+    "กล่องปิดพร้อม returnValue เป็น remove จึงเรียก onConfirm(course.id) โดย course.id คือ 45 และ onConfirm เก็บฟังก์ชัน removeSelection ไว้จากขั้นแรก",
+    "onConfirm(45) → removeSelection(45) ใน my-schedule.js บรรทัด 186",
+    "button",
+    23,
+    27,
+    "ดูการส่ง DELETE"
+  ],
+  [
+    "Frontend ส่ง DELETE",
+    "my-schedule.js บรรทัด 186 ถึง 196",
+    "removeSelection() ใช้ fetch() ส่งรหัสนักศึกษากับ courseId ใน URL แล้ว await รอคำตอบจาก Backend",
+    "เบราว์เซอร์ → backend/server.js บรรทัด 27 ผ่าน HTTP DELETE",
+    "request",
+    186,
+    196,
+    "ดู Backend รับคำขอ"
+  ],
+  [
+    "Backend รับ DELETE",
+    "backend/server.js บรรทัด 27",
+    "Express เรียก removeSelection(req, res) ใน student-controller.js เพื่อตรวจรหัสนักศึกษาและวิชา แล้วส่งต่อให้ deleteSelection()",
+    "server.js → student-controller.js บรรทัด 33 → student-service.js บรรทัด 62",
+    "route",
+    27,
+    27,
+    "ดูการลบในฐานข้อมูล"
+  ],
+  [
+    "Prisma ลบรายการเลือก",
+    "student-service.js บรรทัด 62 ถึง 68",
+    "deleteSelection() ลบแถวใน selections ที่ตรงกับ student_id และ course_id เมื่อลบได้ controller ตอบสถานะ 204 กลับมา",
+    "ฐานข้อมูล → student-controller.js บรรทัด 46 → Frontend",
+    "prisma",
+    62,
+    68,
+    "ดูหน้าเว็บรับผล 204"
+  ],
+  [
+    "Frontend อัปเดต selectedSection",
+    "my-schedule.js บรรทัด 198 ถึง 200",
+    "พอได้ 204 โค้ดใช้ delete selectedSection[45] ทำให้ { 45: 7 } กลายเป็น {} แล้วเรียก render() ของเพื่อน",
+    "removeSelection() → render() ในไฟล์เดียวกัน บรรทัด 113",
+    "request",
+    198,
+    200,
+    "ดูผลในสองตาราง"
+  ],
+  [
+    "ตารางแสดงผลหลังลบ",
+    "my-schedule.js บรรทัด 113 ถึง 134",
+    "render() เห็นว่า selectedSection[45] เป็น undefined จึงเอา section ของ LNG202 กลับมาเป็นตัวเลือก แล้ว fillTable() วาดสองตารางใหม่",
+    "render() → fillTable() → My Schedule และ Courses to Choose ในหน้าเดิม",
+    "render",
+    113,
+    134,
+    null
+  ]
+];
+let walkIndex = 0;
+let walkCancelled = false;
+function showWalkStep() {
+  const [title, file, explanation, connection, key, from, to, label] = walkSteps[walkIndex];
+  document.querySelector("#walk-progress").textContent = "ขั้น " + (walkIndex + 1) + " จาก " + walkSteps.length;
+  document.querySelector("#walk-title").textContent = walkCancelled ? "ยกเลิกแล้ว กลับมาอยู่หน้า My Schedule" : title;
+  document.querySelector("#walk-file").textContent = file;
+  document.querySelector("#walk-explain").textContent = walkCancelled
+    ? "Cancel ให้ค่า cancel ส่วน Esc ใช้ค่าว่างที่ล้างไว้ ทั้งสองอย่างไม่ผ่านเงื่อนไข remove จึงไม่มีคำขอ DELETE"
+    : explanation;
+  document.querySelector("#walk-connection").textContent = walkCancelled ? "ปิดกล่อง → ตารางเดิม" : connection;
+  const part = window.pbi6Snippets[walkCancelled ? "button" : key];
+  const first = walkCancelled ? 23 : from;
+  const last = walkCancelled ? 27 : to;
+  document.querySelector("#walk-source code").textContent = part.lines
+    .map((line, i) => ({line, number:part.start + i}))
+    .filter(({number}) => number >= first && number <= last)
+    .map(({line, number}) => number + "  " + line)
+    .join("\n");
+  const next = document.querySelector("#walk-next");
+  next.hidden = walkCancelled || !label;
+  next.textContent = label ?? "จบเส้นทาง";
+  document.querySelector("#walk-back").disabled = walkIndex === 0 && !walkCancelled;
+  document.querySelector("#walk-cancel").hidden = walkCancelled || walkIndex !== 1;
+  document.querySelector("#walk-escape").hidden = walkCancelled || walkIndex !== 1;
+}
+document.querySelector("#walk-next").addEventListener("click", () => {
+  if (walkIndex < walkSteps.length - 1) walkIndex++;
+  showWalkStep();
+});
+document.querySelector("#walk-back").addEventListener("click", () => {
+  if (walkCancelled) walkCancelled = false;
+  else walkIndex = Math.max(0, walkIndex - 1);
+  showWalkStep();
+});
+for (const id of ["walk-cancel", "walk-escape"]) {
+  document.querySelector("#" + id).addEventListener("click", () => {
+    walkCancelled = true;
+    showWalkStep();
+  });
+}
+document.querySelector("#walk-restart").addEventListener("click", () => {
+  walkIndex = 0;
+  walkCancelled = false;
+  showWalkStep();
+});
+showWalkStep();

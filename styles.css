@@ -151,3 +151,11 @@ dialog::backdrop { background: var(--color-scrim); overflow: hidden; overscroll-
 .exam-ownership, .exam-line-cue { margin-block-end: var(--space-lg); }
 .exam-ownership > .trail { margin-block-start: var(--space-sm); }
 .exam-line-cue { color: var(--color-ink-2); }
+
+
+.click-walk { padding: var(--space-lg); }
+#walk-progress, #walk-file { color: var(--color-cool); font-size: .9rem; overflow-wrap: anywhere; }
+#walk-reading { display: grid; gap: var(--space-sm); margin-block: var(--space-md); }
+#walk-connection { color: var(--color-accent); overflow-wrap: anywhere; }
+#walk-source { background: var(--color-paper-3); max-height: 22rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.walk-controls { display: flex; gap: var(--space-xs); flex-wrap: wrap; margin-block: var(--space-md); }
